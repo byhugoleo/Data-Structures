@@ -38,6 +38,10 @@ public:
     void pop_Back();
     void pop_Front();
     bool Search(int); // Args (data to be searched)
+    void Report();
+
+//Operators
+    int operator[] (int);
 
 private: 
 //Methods for internal opereations
@@ -49,6 +53,15 @@ private:
 List::List() : cur_size(0) { };
 
 List::~List() {}
+
+int List::operator[](int index)
+{
+    if (index < 0 or index > MAX_SIZE) {
+        cout << "Invalid Index!!!\n\n";
+        return 0;
+    }
+    return info[index].get_Info();
+}
 
 void List::shift_L(int pos)
 {
@@ -76,7 +89,7 @@ void List::Insert(int data, int pos)
 
 void List::Erase(int pos)
 {
-    if (pos < 0 or pos > cur_size) {
+    if (pos < 0 or pos > cur_size - 1) {
         cout << "Invalid Position!!!\n\n";
         return;
     }
@@ -101,15 +114,34 @@ void List::push_Front(int data)
 
 void List::pop_Back()
 {
-    //TODO
+    info[cur_size - 1].set_Info(0);
+    cur_size--;
 }
 
 void List::pop_Front()
 {
-    //TODO
+    Erase(0);
+}
+
+void List::Report()
+{
+    cout << "Size: " << cur_size << endl;
+    for (int i = 0; i < cur_size; i++)
+        cout << info[i].get_Info() << " ";
+    cout << endl;
 }
 
 int main()
 {
-    //TODO
+    List l;
+    l.push_Front(0);
+    l.push_Back(1);
+    l.push_Back(2);
+    l.push_Back(3);
+    l.Report();
+    l.Erase(3);
+    l.Report();
+    l.Erase(3);
+    l.Report();
+    cout << l[0] << " " << l[1] << " " << l[2] << endl;
 }
