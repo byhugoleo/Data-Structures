@@ -5,7 +5,7 @@ using namespace std;
 
 #define MAX_SIZE 100 // Max size of the list can be changed by any integer
 
-struct Data  {
+struct Data {
 //Methods
     void set_Info(int info){
         this->info = info;
