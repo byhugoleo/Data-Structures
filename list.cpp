@@ -123,6 +123,14 @@ void List::pop_Front()
     Erase(0);
 }
 
+bool List::Search(int data)
+{
+    for (int i = 0; i < cur_size; i++)
+        if (info[i].get_Info() == data)
+            return true;
+    return false;
+}
+
 void List::Report()
 {
     cout << "Size: " << cur_size << endl;
@@ -144,4 +152,7 @@ int main()
     l.Erase(3);
     l.Report();
     cout << l[0] << " " << l[1] << " " << l[2] << endl;
+
+    cout << l.Search(5) << endl;
+    cout << l.Search(2) << endl;
 }
