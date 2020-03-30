@@ -7,7 +7,7 @@ using namespace std;
 
 struct Data {
 //Methods
-    void set_Info(int info){
+    void set_Info(int info) {
         this->info = info;
     }
     int get_Info() {
