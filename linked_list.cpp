@@ -83,7 +83,6 @@ public:
             cout << "Invalid Position!!!\n\n";
             return;
         }
-        cout << "ko" << endl;
         node *tempnode, *prevnode = head;
         size++;
         tempnode = new node(data);
@@ -138,7 +137,6 @@ int main()
     l.Report();
     l.Erase(0);
     l.Report();
-    cout << " ok " << endl;
     l.Insert(0, 0);
     l.Insert(1, 1);
     l.Insert(2, 2);
