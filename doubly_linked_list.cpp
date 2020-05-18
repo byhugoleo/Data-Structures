@@ -245,8 +245,41 @@ public:
             cout << "ERROR:> Invalid Position" << endl;
             return false;
         }
-        Node *temp = head->get_nxt_node();
-        
+        Node *temp, *prev, *nxt;
+        size--;
+        if (!pos) {
+            temp = head->get_nxt_node();
+            head->change_nxt_node(temp->get_nxt_node());
+            head->get_nxt_node()->clear_prev();
+            free(temp);
+            return true;
+        }
+        if (pos == size) {
+            temp = tail->get_prev_node();
+            tail->change_prev_node(temp->get_prev_node());
+            tail->get_prev_node()->clear_nxt();
+            free(temp);
+            return true;
+        }
+        int mid = (size + 1) / 2;
+        if (pos + 1 <= mid) {
+            prev = head->get_nxt_node();
+            for (uint i = 1; i < pos; i++)
+                prev = prev->get_nxt_node();
+            temp = prev->get_nxt_node();
+            nxt = temp->get_nxt_node();
+        } else {
+            nxt = tail->get_prev_node();
+            for (uint i = size; i > pos + 1; i--)
+                nxt = nxt->get_prev_node();
+            temp = nxt->get_prev_node();
+            prev = temp->get_prev_node();
+        }
+        prev->change_nxt_node(nxt);
+        nxt->change_prev_node(prev);
+        temp->clear();
+        free(temp);
+        return true;
     }
     bool remove(int info) {
         //TODO
@@ -318,4 +351,36 @@ int main()
 
     cout << "\nTESTS #6" << endl;
     
+    DoublyList ly;
+    int r;
+    vector<int> v;
+    for (int i = 0; i <= 11; i++) {
+        r = rand() % 40;
+        v.push_back(r);
+        ly.insert(i, r);
+    }
+    cout << "INFO->";
+    for (auto i : v)
+        cout << " " << i;
+    cout << endl;
+    cout << ly.to_string() << endl;
+    ly.erase(0);
+    debug(ly.to_string());
+    ly.erase(10);
+    debug(ly.to_string());
+    ly.erase(8);
+    debug(ly.to_string());
+    debug(ly.to_string(true));
+    ly.erase(1);
+    debug(ly.to_string());
+    ly.erase(3);
+    debug(ly.to_string());
+    debug(ly.to_string(true));
+    ly.insert(5, 38);
+    debug(ly.to_string());
+    ly.erase(ly.search(38));
+    debug(ly.to_string());
+
+    cout << "\nTESTS #7" << endl;
+
 }
