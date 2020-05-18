@@ -30,7 +30,6 @@
 *.exe
 *.out
 *.app
-*.sh
 list
 linked_list
 doubly_linked_list
