@@ -130,6 +130,21 @@ public:
         }
         return infos;
     }
+    int search(int info) const{
+        Node *temp = head->get_nxt_node();
+        uint cnt = -1;
+        while (temp != NULL) {
+            if (temp->compare(info) == 1 and ordered) {
+                debug("entro");
+                return -1;
+            }
+            else if (!temp->compare(info))
+                return ++cnt;
+            cnt++;
+            temp = temp->get_nxt_node();
+        }
+        return -1;
+    }
     //Non-const methods
     bool insert(uint pos, int info) {
         if (ordered) {
@@ -224,21 +239,6 @@ public:
         nxt->change_prev_node(temp);
         temp = nxt = prev = NULL;
         return true;
-    }
-    int search(int info) {
-        Node *temp = head->get_nxt_node();
-        uint cnt = -1;
-        while (temp != NULL) {
-            if (temp->compare(info) == 1 and ordered) {
-                debug("entro");
-                return -1;
-            }
-            else if (!temp->compare(info))
-                return ++cnt;
-            cnt++;
-            temp = temp->get_nxt_node();
-        }
-        return -1;
     }
     bool erase(int pos) {
         if (pos < 0 or pos >= size) {
