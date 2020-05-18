@@ -246,7 +246,7 @@ public:
             return false;
         }
         Node *temp = head->get_nxt_node();
-        cout << "TESTE" << endl;
+        
     }
     bool remove(int info) {
         //TODO
