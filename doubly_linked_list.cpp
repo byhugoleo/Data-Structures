@@ -4,6 +4,8 @@ using namespace std;
 
 #define debug(x) cout << "DEBUG# " << x << endl;
 
+void tests();
+
 struct Data {
 //Constructors
     Data() {
@@ -96,14 +98,23 @@ public:
         while (head != NULL) {
             curnode = head;
             head = head->get_nxt_node();
-            free(curnode);
             curnode->clear();
+            free(curnode);
         }
-        free(tail);
         tail->clear();
+        free(tail);
     }
 //Methods
     //Const methods
+    /**
+     * Return all elements of the Doubly Linked List with string format. The default format is: 
+     * "INFO-> x1 x2 ... xn".
+     * 
+     * If the parameter reverse is "true", the elements follow the reverse format:
+     * "INFO-> xn ... x2 x1".
+     * 
+     * If the Doubly Linked List is empty, the function returns an empty string and a message: "WARNING:> Empty List.".
+    */ 
     string to_string(bool reverse = false) const{
         if (head->get_nxt_node() == NULL) {
             return "WARNING:> Empty List.";
@@ -130,25 +141,58 @@ public:
         }
         return infos;
     }
+    /**
+     * Search an element passed by parameter and returns the index of this element, if this element
+     * was not found the function return -1.
+     * 
+     * If the Doubly Linked List is empty, the function returns -1 and a message: "WARNING:> Empty List.".
+    */ 
     int search(int info) const{
+        if (head->get_nxt_node() == NULL) {
+            cout << "WARNING:> Empty List." << endl;
+            return -1;
+        }
         Node *temp = head->get_nxt_node();
         uint cnt = -1;
         while (temp != NULL) {
             if (temp->compare(info) == 1 and ordered) {
-                debug("entro");
+                temp = NULL;
                 return -1;
             }
-            else if (!temp->compare(info))
+            else if (!temp->compare(info)) {
+                temp = NULL;
                 return ++cnt;
+            }
             cnt++;
             temp = temp->get_nxt_node();
         }
+        temp = NULL;
         return -1;
     }
+    /**
+     * Returns size of the Doubly Linked List.
+    */ 
+    uint get_size() const{
+        return size;
+    }
+    /**
+     * Returns "true" for an empty Doubly Linked List, else returns "false".
+    */
+    bool empty() const{
+        return !size;
+    }
     //Non-const methods
+    /**
+     * Insert the value passed by parameter at the "pos" position
+     * 
+     * The function returns "true" if the element has successfully inserted, else returns "false".
+     * 
+     * If the list are in ordered mode (only elements can be inserted with ordered fuction), the
+     * function returns "false" and two messages: "ERROR:> List mode = ordered insert. Invalid function." and "Try ordered_insert(int info)".
+    */
     bool insert(uint pos, int info) {
         if (ordered) {
-            cout << "ERROR:> List mode = sorting insert. Invalid function." << endl;
+            cout << "ERROR:> List mode = ordered insert. Invalid function." << endl;
             cout << "Try ordered_insert(int info)" << endl;
             return false;
         }
@@ -178,7 +222,7 @@ public:
             temp = NULL;
             return true;
         }
-        int mid = (size - 1) / 2;
+        uint mid = (size - 1) / 2;
         if (pos + 1 <= mid) {
             prev = head->get_nxt_node();
             for (uint i = 1; i < pos; i++)
@@ -197,6 +241,14 @@ public:
         temp = nxt = prev = NULL;
         return true;
     }
+    /**
+     * Insert the value passed by parameter in order
+     * 
+     * The function returns "true" if the element has successfully inserted, else returns "false".
+     * 
+     * If the list are not in ordered mode (only elements can be inserted with ordered fuction), the
+     * function returns "false" and two messages: "ERROR:> List mode = unordered insert. Invalid function." and "Try insert(int pos, int info)".
+    */
     bool ordered_insert(int info) {
         if (!ordered and size) {
             cout << "ERROR:> List mode = unordered insert. Invalid function." << endl;
@@ -240,9 +292,22 @@ public:
         temp = nxt = prev = NULL;
         return true;
     }
+    /**
+     * Erase one element in the position passed by parameter.
+     * 
+     * The function returns "true" if the element has successfully erased, else returns "false".
+     * 
+     * If the Doubly Linked List is empty, the function returns "false" and a message: "WARNING:> Empty List.".
+     * 
+     * The same happens if the position passed by parameter is out of the bounds, the function returns "false" and a message: "ERROR:> Invalid Position.".
+    */  
     bool erase(int pos) {
+        if (head->get_nxt_node() == NULL) {
+            cout << "WARNING:> Empty List." << endl;
+            return false;
+        }
         if (pos < 0 or pos >= size) {
-            cout << "ERROR:> Invalid Position" << endl;
+            cout << "ERROR:> Invalid Position." << endl;
             return false;
         }
         Node *temp, *prev, *nxt;
@@ -250,18 +315,22 @@ public:
         if (!pos) {
             temp = head->get_nxt_node();
             head->change_nxt_node(temp->get_nxt_node());
-            head->get_nxt_node()->clear_prev();
+            if (size)
+                head->get_nxt_node()->clear_prev();
+            temp->clear();
             free(temp);
             return true;
         }
         if (pos == size) {
             temp = tail->get_prev_node();
             tail->change_prev_node(temp->get_prev_node());
-            tail->get_prev_node()->clear_nxt();
+            if (size)
+                tail->get_prev_node()->clear_nxt();
+            temp->clear();
             free(temp);
             return true;
         }
-        int mid = (size + 1) / 2;
+        uint mid = (size + 1) / 2;
         if (pos + 1 <= mid) {
             prev = head->get_nxt_node();
             for (uint i = 1; i < pos; i++)
@@ -281,16 +350,82 @@ public:
         free(temp);
         return true;
     }
+    /**
+     * Remove all elemets that is equals info.
+     * 
+     * The function returns "true" if the element has successfully removed, else returns "false".
+     * 
+     * If the Doubly Linked List is empty, the function returns "false" and a message: "WARNING:> Empty List.".
+    */ 
     bool remove(int info) {
-        //TODO
-        return false;
+        if (head->get_nxt_node() == NULL) {
+            cout << "WARNING:> Empty List." << endl;
+            return false;
+        }
+        Node *temp = head->get_nxt_node(), *nxt, *prev;
+        bool removed = false;
+        while (temp != NULL) {
+            if (temp->compare(info) == 1 and ordered and removed)
+                return true;
+            else if (temp->compare(info) == 1 and ordered and !removed)
+                return false;
+            if (!temp->compare(info) and temp->get_prev_node() == NULL) {
+                erase(0);
+                temp = head->get_nxt_node();
+                removed = true;
+            } else if (!temp->compare(info) and temp->get_nxt_node() == NULL) {
+                erase(size - 1);
+                removed = true;
+                return true;
+            } else if (!temp->compare(info)) {
+                size--;
+                prev = temp->get_prev_node();
+                nxt = temp->get_nxt_node();
+                prev->change_nxt_node(nxt);
+                nxt->change_prev_node(prev);
+                temp->clear();
+                free(temp);
+                temp = nxt;
+                removed = true;
+            } else
+                temp = temp->get_nxt_node();
+        }
+        return removed;
+    }
+    /**
+     * Erase all elements and free the heap memory allocation, except the pointers head and tail are untouched.
+    */
+    void clear() {
+        Node *curnode = head->get_nxt_node(), *temp;
+        while (curnode != NULL) {
+            temp = curnode;
+            curnode = curnode->get_nxt_node();
+            temp->clear();
+            free(temp);
+        }
+        head->clear();
+        tail->clear();
+        size = 0;
     }
 };
 
 int main()
 {
+    /*Functions
+    All functions are commenteds.
+    Just create an object and type '.' to view the functions and comments.
+    Ex.:
+    DoublyList L;
+    L.
+    */
+    //tests();
+}
+
+void tests() 
+{
     srand(time(NULL));
     cout << "TESTS #1" << endl;
+
     Node n(5);
     Data d = n.get_info();
     cout << d.get_info() << endl;
@@ -305,6 +440,7 @@ int main()
     cout << "\nTESTS #2" << endl;
     DoublyList l;
     l.insert(0, 1);
+    l.clear();
     cout << l.to_string() << endl;
 
     cout << "\nTESTS #3" << endl;
@@ -312,6 +448,7 @@ int main()
     for (int i = 0; i < 6; i++)
         dl.insert(i, i + 1), cout << dl.to_string() << endl;
     cout << dl.to_string() << endl;
+    dl.clear();
 
     cout << "\nTESTS #4" << endl;
     DoublyList ls;
@@ -323,6 +460,7 @@ int main()
     ls.insert(2, 6);
     cout << ls.to_string() << endl;
     cout << ls.to_string() << endl;
+    ls.clear();
 
     DoublyList lb;
     lb.insert(0, 1);
@@ -333,9 +471,9 @@ int main()
     lb.insert(4, 6);
     cout << lb.to_string() << endl;
     cout << lb.to_string(true) << endl;
+    lb.clear();
 
     cout << "\nTESTS #5" << endl;
-
     DoublyList lz;
     for (int i = 10; i >= 1; i--)
         lz.ordered_insert(i), debug(lz.to_string());
@@ -348,9 +486,9 @@ int main()
     cout << lz.to_string() << endl;
     cout << lz.search(11) << endl;
     cout << lz.to_string(true) << endl;
+    lz.clear();
 
     cout << "\nTESTS #6" << endl;
-    
     DoublyList ly;
     int r;
     vector<int> v;
@@ -380,7 +518,39 @@ int main()
     debug(ly.to_string());
     ly.erase(ly.search(38));
     debug(ly.to_string());
+    ly.clear();
 
     cout << "\nTESTS #7" << endl;
+    DoublyList lq;
+    v.clear();
+    for (int i = 0; i < 20; i++) {
+        v.push_back(2);
+        lq.insert(i, 2);
+    }
+    cout << "INFO->";
+    for (auto i : v)
+        cout << " " << i;
+    cout << endl; 
+    cout << lq.to_string() << endl;
+    cout << lq.get_size() << endl;
+    //lq.insert(0, 1);
+    lq.remove(2);
+    cout << " ok " << endl;
+    cout << lq.to_string() << endl;
+    cout << lq.get_size() << endl;
+    cout << lq.to_string(true) << endl;
+    lq.erase(0);
+    cout << lq.to_string() << endl;
+    lq.clear();
 
+    cout << "\nTESTS #8" << endl;
+    DoublyList ll;
+    r;
+    for (int i = 0; i < 10; i++) {
+        r = rand() % 20;
+        ll.ordered_insert(r);
+    }
+    cout << ll.to_string() << endl;
+    cout << ll.get_size() << endl;
+    cout << ll.to_string(true) << endl;
 }
