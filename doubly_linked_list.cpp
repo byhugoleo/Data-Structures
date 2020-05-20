@@ -407,6 +407,22 @@ public:
         tail->clear();
         size = 0;
     }
+    //New functions
+    bool push_back(int info) {
+        //TODO: adds a new element info at the beginning of the list.
+    }
+    bool push_front(int info) {
+        //TODO: adds a new element info at the end of the list.
+    }
+    int get(int pos) {
+        //TODO: returns the element at the position pos.
+    }
+    int front() {
+        //TODO: returns the first element of the list.
+    }
+    int back() {
+        //TODO: returns the last element of the list.
+    }
 };
 
 int main()
