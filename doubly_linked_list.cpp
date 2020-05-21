@@ -63,9 +63,6 @@ public:
         return info.to_string();
     }
     //Non-const methods
-    void change_info(int info) {
-        this->info.set_info(info);
-    }
     void change_prev_node(Node *prev) {
         this->prev = prev;
     }
