@@ -6,100 +6,104 @@ using namespace std;
 
 void tests();
 
+template<class T>
 struct Data {
 //Constructors
-    Data() {
-        info = 0;
-    }
-    Data(int info) {
-        this->info = info;
-    }
+    Data() {}
+    Data(const T &info) : info(info) {}
 //Methods
     //Const methods
-    int get_info() const{
-        return info;
+    T get_info() const{
+        return this->info;
     }
     string to_string() const{
         stringstream ss;
-        ss << info;
+        ss << this->info;
         return ss.str();
     }
     //Non-const methods
-    void set_info(int info) {
+    void set_info(const T &info) {
         this->info = info;
     }
 
 private:
 //Data-Properties
-    int info;
+    T info;
 };
 
+template<class T>
 class Node {
 //Data-Properties
-    Data info;
-    Node *prev, *nxt;
+    Data<T> info;
+    Node<T> *prev, *nxt;
 
 public:
 //Constructors-Destructors
     Node() : info(), prev(NULL), nxt(NULL) {}
-    Node(int info) : info(info), prev(NULL), nxt(NULL) {}
+    Node(const T &info) : info(info), prev(NULL), nxt(NULL) {}
     ~Node() {}
 //Methods
     //Const methods
-    Data get_info() const{
-        return info;
+    Data<T> get_info() const{
+        return this->info;
     }
-    Node *get_prev_node() const{
-        return prev;
+    Node<T> *get_prev_node() const{
+        return this->prev;
     }
-    Node *get_nxt_node() const{
-        return nxt;
+    Node<T> *get_nxt_node() const{
+        return this->nxt;
     }
-    int compare(int y) const{
-        int x = info.get_info();
+    int compare(const T &y) const{
+        const T x = this->info.get_info();
         return (x > y ? 1 : x < y ? -1 : 0);
     }
     string to_string() const{
-        return info.to_string();
+        return this->info.to_string();
     }
     //Non-const methods
-    void change_prev_node(Node *prev) {
+    void change_prev_node(Node<T> *prev) {
         this->prev = prev;
     }
-    void change_nxt_node(Node *nxt) {
+    void change_nxt_node(Node<T> *nxt) {
         this->nxt = nxt;
     }
     void clear() {
-        info.set_info(0);
         clear_prev(), clear_nxt();
     }
     void clear_nxt() {
-        nxt = NULL;
+        this->nxt = NULL;
     }
     void clear_prev() {
-        prev = NULL;
+        this->prev = NULL;
     }
 };
 
+template<class T>
 class DoublyList {
 //Data-Properties
-    Node *head, *tail;    
+    Node<T> *head, *tail;    
     uint size;
     bool ordered;
 
 public:
 //Constructors-Destructors
-    DoublyList() : head(new Node), tail(new Node), size(0), ordered(false) {}
+    DoublyList() : head(new Node<T>), tail(new Node<T>), size(0), ordered(false) {}
+    DoublyList(vector<T>) {
+        //TODO
+    }
+    DoublyList(const DoublyList<T> &copy) {
+        //TODO: copy constructor
+    }
     ~DoublyList() {
-        Node *curnode;
-        while (head != NULL) {
-            curnode = head;
-            head = head->get_nxt_node();
-            curnode->clear();
-            free(curnode);
+        Node<T> *cur;
+        while (this->head != NULL) {
+            cur = this->head;
+            this->head = this->head->get_nxt_node();
+            cur->clear();
+            free(cur);
         }
-        tail->clear();
-        free(tail);
+        this->tail->clear();
+        free(this->tail);
     }
 //Methods
     //Const methods
@@ -113,28 +117,28 @@ public:
      * If the Doubly Linked List is empty, the function returns an empty string and a message: "WARNING:> Empty List.".
     */ 
     string to_string(bool reverse = false) const{
-        if (head->get_nxt_node() == NULL) {
+        if (this->head->get_nxt_node() == NULL) {
             return "WARNING:> Empty List.";
         }
-        Node *curnode;
+        Node<T> *cur;
         string infos;
         infos += "INFO->";
         if (reverse) {
-            curnode = tail;
+            cur = this->tail;
             while (true) {
-                curnode = curnode->get_prev_node();
-                if (curnode == NULL)
+                cur = cur->get_prev_node();
+                if (cur == NULL)
                     break;
-                infos += " " + curnode->to_string();
+                infos += " " + cur->to_string();
             }
             return infos;
         }
-        curnode = head;
+        cur = this->head;
         while (true) {
-            curnode = curnode->get_nxt_node();
-            if (curnode == NULL)
+            cur = cur->get_nxt_node();
+            if (cur == NULL)
                 break;
-            infos += " " + curnode->to_string();
+            infos += " " + cur->to_string();
         }
         return infos;
     }
@@ -144,12 +148,12 @@ public:
      * 
      * If the Doubly Linked List is empty, the function returns -1 and a message: "WARNING:> Empty List.".
     */ 
-    int search(int info) const{
-        if (head->get_nxt_node() == NULL) {
+    int search(const T &info) const{
+        if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
             return -1;
         }
-        Node *temp = head->get_nxt_node();
+        Node<T> *temp = this->head->get_nxt_node();
         uint cnt = -1;
         while (temp != NULL) {
             if (temp->compare(info) == 1 and ordered) {
@@ -170,13 +174,13 @@ public:
      * Returns size of the Doubly Linked List.
     */ 
     uint get_size() const{
-        return size;
+        return this->size;
     }
     /**
      * Returns "true" for an empty Doubly Linked List, else returns "false".
     */
     bool empty() const{
-        return !size;
+        return !this->size;
     }
     //Non-const methods
     /**
@@ -185,49 +189,49 @@ public:
      * The function returns "true" if the element has successfully inserted, else returns "false".
      * 
      * If the list are in ordered mode (only elements can be inserted with ordered fuction), the
-     * function returns "false" and two messages: "ERROR:> List mode = ordered insert. Invalid function." and "Try ordered_insert(int info)".
+     * function returns "false" and two messages: "ERROR:> List mode = ordered insert. Invalid function." and "Try ordered_insert(const T &info)".
     */
-    bool insert(uint pos, int info) {
+    bool insert(uint pos, const T &info) {
         if (ordered) {
             cout << "ERROR:> List mode = ordered insert. Invalid function." << endl;
-            cout << "Try ordered_insert(int info)" << endl;
+            cout << "Try ordered_insert(const T &info)" << endl;
             return false;
         }
-        if (pos < 0 or pos > size) {
+        if (pos < 0 or pos > this->size) {
             cout << "ERROR:> invalid position." << endl;
             return false;
         }
-        Node *temp = new Node(info), *prev, *nxt;
-        size++;
-        if (head->get_nxt_node() == NULL) {
-            head->change_nxt_node(temp);
-            tail->change_prev_node(temp);
+        Node<T> *temp = new Node<T>(info), *prev, *nxt;
+        this->size++;
+        if (this->head->get_nxt_node() == NULL) {
+            this->head->change_nxt_node(temp);
+            this->tail->change_prev_node(temp);
             temp = NULL;
             return true;
         }
         if (!pos) {
-            temp->change_nxt_node(head->get_nxt_node());
-            head->get_nxt_node()->change_prev_node(temp);
-            head->change_nxt_node(temp);
+            temp->change_nxt_node(this->head->get_nxt_node());
+            this->head->get_nxt_node()->change_prev_node(temp);
+            this->head->change_nxt_node(temp);
             temp = NULL;
             return true;
         }
-        if (pos == size - 1) {
-            temp->change_prev_node(tail->get_prev_node());
-            tail->get_prev_node()->change_nxt_node(temp);
-            tail->change_prev_node(temp);
+        if (pos == this->size - 1) {
+            temp->change_prev_node(this->tail->get_prev_node());
+            this->tail->get_prev_node()->change_nxt_node(temp);
+            this->tail->change_prev_node(temp);
             temp = NULL;
             return true;
         }
-        uint mid = (size - 1) / 2;
+        const uint mid = (this->size - 1) / 2;
         if (pos + 1 <= mid) {
-            prev = head->get_nxt_node();
+            prev = this->head->get_nxt_node();
             for (uint i = 1; i < pos; i++)
                 prev = prev->get_nxt_node();
             nxt = prev->get_nxt_node();
         } else {
-            nxt = tail->get_prev_node();
-            for (uint i = size - 1; i > pos + 1; i--)
+            nxt = this->tail->get_prev_node();
+            for (uint i = this->size - 1; i > pos + 1; i--)
                 nxt = nxt->get_prev_node();
             prev = nxt->get_prev_node();
         }
@@ -244,28 +248,28 @@ public:
      * The function returns "true" if the element has successfully inserted, else returns "false".
      * 
      * If the list are not in ordered mode (only elements can be inserted with ordered fuction), the
-     * function returns "false" and two messages: "ERROR:> List mode = unordered insert. Invalid function." and "Try insert(int pos, int info)".
+     * function returns "false" and two messages: "ERROR:> List mode = unordered insert. Invalid function." and "Try insert(int pos, const T &info)".
     */
-    bool ordered_insert(int info) {
-        if (!ordered and size) {
+    bool ordered_insert(const T &info) {
+        if (!ordered and this->size) {
             cout << "ERROR:> List mode = unordered insert. Invalid function." << endl;
-            cout << "Try insert(int info)" << endl;
+            cout << "Try insert(int pos, const T &info)" << endl;
             return false;
         }
         ordered = true;
-        Node *temp = new Node(info), *nxt, *prev;
-        size++;
-        if (head->get_nxt_node() == NULL) {
-            head->change_nxt_node(temp);
-            tail->change_prev_node(temp);
+        Node<T> *temp = new Node<T>(info), *nxt, *prev;
+        this->size++;
+        if (this->head->get_nxt_node() == NULL) {
+            this->head->change_nxt_node(temp);
+            this->tail->change_prev_node(temp);
             temp = NULL;
             return true;
         }
-        nxt = head->get_nxt_node();
+        nxt = this->head->get_nxt_node();
         if (nxt->compare(info) == 1) {
             nxt->change_prev_node(temp);
             temp->change_nxt_node(nxt);
-            head->change_nxt_node(temp);
+            this->head->change_nxt_node(temp);
             nxt = temp = NULL;
             return true;
         }
@@ -275,9 +279,9 @@ public:
             nxt = nxt->get_nxt_node();
         }
         if (nxt == NULL) {
-            temp->change_prev_node(tail->get_prev_node());
-            tail->get_prev_node()->change_nxt_node(temp);
-            tail->change_prev_node(temp);
+            temp->change_prev_node(this->tail->get_prev_node());
+            this->tail->get_prev_node()->change_nxt_node(temp);
+            this->tail->change_prev_node(temp);
             nxt = temp = NULL;
             return true;
         }
@@ -298,44 +302,44 @@ public:
      * 
      * The same happens if the position passed by parameter is out of the bounds, the function returns "false" and a message: "ERROR:> Invalid Position.".
     */  
-    bool erase(int pos) {
-        if (head->get_nxt_node() == NULL) {
+    bool erase(const int &pos) {
+        if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
             return false;
         }
-        if (pos < 0 or pos >= size) {
+        if (pos < 0 or pos >= this->size) {
             cout << "ERROR:> Invalid Position." << endl;
             return false;
         }
-        Node *temp, *prev, *nxt;
-        size--;
+        Node<T> *temp, *prev, *nxt;
+        this->size--;
         if (!pos) {
-            temp = head->get_nxt_node();
-            head->change_nxt_node(temp->get_nxt_node());
-            if (size)
-                head->get_nxt_node()->clear_prev();
+            temp = this->head->get_nxt_node();
+            this->head->change_nxt_node(temp->get_nxt_node());
+            if (this->size)
+                this->head->get_nxt_node()->clear_prev();
             temp->clear();
             free(temp);
             return true;
         }
-        if (pos == size) {
-            temp = tail->get_prev_node();
-            tail->change_prev_node(temp->get_prev_node());
-            if (size)
-                tail->get_prev_node()->clear_nxt();
+        if (pos == this->size) {
+            temp = this->tail->get_prev_node();
+            this->tail->change_prev_node(temp->get_prev_node());
+            if (this->size)
+                this->tail->get_prev_node()->clear_nxt();
             temp->clear();
             free(temp);
             return true;
         }
-        uint mid = (size + 1) / 2;
+        const uint mid = (this->size + 1) / 2;
         if (pos + 1 <= mid) {
-            prev = head->get_nxt_node();
+            prev = this->head->get_nxt_node();
             for (uint i = 1; i < pos; i++)
                 prev = prev->get_nxt_node();
             temp = prev->get_nxt_node();
             nxt = temp->get_nxt_node();
         } else {
-            nxt = tail->get_prev_node();
+            nxt = this->tail->get_prev_node();
             for (uint i = size; i > pos + 1; i--)
                 nxt = nxt->get_prev_node();
             temp = nxt->get_prev_node();
@@ -354,12 +358,12 @@ public:
      * 
      * If the Doubly Linked List is empty, the function returns "false" and a message: "WARNING:> Empty List.".
     */ 
-    bool remove(int info) {
-        if (head->get_nxt_node() == NULL) {
+    bool remove(const T &info) {
+        if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
             return false;
         }
-        Node *temp = head->get_nxt_node(), *nxt, *prev;
+        Node<T> *temp = this->head->get_nxt_node(), *nxt, *prev;
         bool removed = false;
         while (temp != NULL) {
             if (temp->compare(info) == 1 and ordered and removed)
@@ -368,14 +372,14 @@ public:
                 return false;
             if (!temp->compare(info) and temp->get_prev_node() == NULL) {
                 erase(0);
-                temp = head->get_nxt_node();
+                temp = this->head->get_nxt_node();
                 removed = true;
             } else if (!temp->compare(info) and temp->get_nxt_node() == NULL) {
-                erase(size - 1);
+                erase(this->size - 1);
                 removed = true;
                 return true;
             } else if (!temp->compare(info)) {
-                size--;
+                this->size--;
                 prev = temp->get_prev_node();
                 nxt = temp->get_nxt_node();
                 prev->change_nxt_node(nxt);
@@ -393,25 +397,25 @@ public:
      * Erase all elements and free the heap memory allocation, except the pointers head and tail are untouched.
     */
     void clear() {
-        Node *curnode = head->get_nxt_node(), *temp;
-        while (curnode != NULL) {
-            temp = curnode;
-            curnode = curnode->get_nxt_node();
+        Node<T> *cur = this->head->get_nxt_node(), *temp;
+        while (cur != NULL) {
+            temp = cur;
+            cur = cur->get_nxt_node();
             temp->clear();
             free(temp);
         }
-        head->clear();
-        tail->clear();
-        size = 0;
+        this->head->clear();
+        this->tail->clear();
+        this->size = 0;
     }
     //New functions
-    bool push_back(int info) {
+    bool push_back(const T &info) {
         //TODO: adds a new element info at the beginning of the list.
     }
-    bool push_front(int info) {
+    bool push_front(const T &info) {
         //TODO: adds a new element info at the end of the list.
     }
-    int get(int pos) {
+    T get(const int &pos) {
         //TODO: returns the element at the position pos.
     }
     int front() {
@@ -428,9 +432,10 @@ int main()
     All functions are commenteds.
     Just create an object and type '.' to view the functions and comments.
     Ex.:
-    DoublyList L;
+    DoublyList<Type{basic data types, string}> L;
     L.
     */
+    
     //tests();
 }
 
@@ -439,8 +444,8 @@ void tests()
     srand(time(NULL));
     cout << "TESTS #1" << endl;
 
-    Node n(5);
-    Data d = n.get_info();
+    Node<int> n(5);
+    Data<int> d = n.get_info();
     cout << d.get_info() << endl;
 
     stringstream ss;
@@ -451,20 +456,20 @@ void tests()
     cout << n.to_string() << endl;
 
     cout << "\nTESTS #2" << endl;
-    DoublyList l;
+    DoublyList<int> l;
     l.insert(0, 1);
     l.clear();
     cout << l.to_string() << endl;
 
     cout << "\nTESTS #3" << endl;
-    DoublyList dl;
+    DoublyList<int> dl;
     for (int i = 0; i < 6; i++)
         dl.insert(i, i + 1), cout << dl.to_string() << endl;
     cout << dl.to_string() << endl;
     dl.clear();
 
     cout << "\nTESTS #4" << endl;
-    DoublyList ls;
+    DoublyList<int> ls;
     ls.insert(0, 1);
     ls.insert(1, 2);
     ls.insert(2, 3);
@@ -475,7 +480,7 @@ void tests()
     cout << ls.to_string() << endl;
     ls.clear();
 
-    DoublyList lb;
+    DoublyList<int> lb;
     lb.insert(0, 1);
     lb.insert(0, 2);
     lb.insert(0, 3);
@@ -487,7 +492,7 @@ void tests()
     lb.clear();
 
     cout << "\nTESTS #5" << endl;
-    DoublyList lz;
+    DoublyList<int> lz;
     for (int i = 10; i >= 1; i--)
         lz.ordered_insert(i), debug(lz.to_string());
     cout << lz.to_string() << endl;
@@ -502,7 +507,7 @@ void tests()
     lz.clear();
 
     cout << "\nTESTS #6" << endl;
-    DoublyList ly;
+    DoublyList<int> ly;
     int r;
     vector<int> v;
     for (int i = 0; i <= 11; i++) {
@@ -534,7 +539,7 @@ void tests()
     ly.clear();
 
     cout << "\nTESTS #7" << endl;
-    DoublyList lq;
+    DoublyList<int> lq;
     v.clear();
     for (int i = 0; i < 20; i++) {
         v.push_back(2);
@@ -557,7 +562,7 @@ void tests()
     lq.clear();
 
     cout << "\nTESTS #8" << endl;
-    DoublyList ll;
+    DoublyList<int> ll;
     r;
     for (int i = 0; i < 10; i++) {
         r = rand() % 20;
@@ -566,4 +571,30 @@ void tests()
     cout << ll.to_string() << endl;
     cout << ll.get_size() << endl;
     cout << ll.to_string(true) << endl;
+
+    cout << "\nTESTS #9" << endl;
+    DoublyList<string> listS;
+    listS.ordered_insert("teste1");
+    listS.ordered_insert("teste3");
+    listS.ordered_insert("teste2");
+    cout << listS.to_string() << endl;
+    listS.erase(listS.search("teste1"));
+    cout << listS.to_string() << endl;
+    listS.insert(0, "dsd");
+
+    DoublyList<double> ldouble;
+    ldouble.ordered_insert(1.1);
+    ldouble.ordered_insert(1.0);
+    ldouble.ordered_insert(0.9);
+    ldouble.ordered_insert(1.3);
+    ldouble.erase(ldouble.search(0.9));
+    ldouble.ordered_insert(1.12);
+    cout << ldouble.to_string() << endl;
+
+    DoublyList<char> listchar;
+    listchar.ordered_insert('a');
+    listchar.ordered_insert('0');
+    listchar.ordered_insert('c');
+    listchar.ordered_insert('b');
+    cout << listchar.to_string() << endl;
 }
