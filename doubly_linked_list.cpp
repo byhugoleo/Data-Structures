@@ -435,7 +435,6 @@ int main()
     DoublyList<Type{basic data types, string}> L;
     L.
     */
-    
     //tests();
 }
 
