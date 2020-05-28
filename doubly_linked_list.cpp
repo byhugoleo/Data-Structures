@@ -54,7 +54,7 @@ public:
         this->prev = this->nxt = NULL;
     }
 //Methods
-    //Const methods
+    //Const
     Data<T> get_data() const{
         return this->info;
     }
@@ -71,7 +71,7 @@ public:
     string to_string() const{
         return this->info.to_string();
     }
-    //Non-const methods
+    //Non-const
 protected:
     void change_prev_node(Node<T> *prev) {
         this->prev = prev;
@@ -123,7 +123,7 @@ public:
         free(this->tail);
     }
 //Methods
-    //Const methods
+    //Const
     /**
      * Returns a pointer to the first node of the list.
      * 
@@ -154,7 +154,7 @@ public:
      * If the Doubly Linked List is empty, the function returns NULL and a message: "WARNING:> Empty List.".
      * 
      * The same happens if the position passed by parameter is out of the bounds, the function returns NULL and a message: "ERROR:> Invalid Position.".
-     */ 
+     */
     Node<T> *get_at(const int &pos) {
         if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
@@ -190,7 +190,7 @@ public:
      * "INFO-> xn ... x2 x1".
      * 
      * If the Doubly Linked List is empty, the function returns an empty string and a message: "WARNING:> Empty List.".
-    */ 
+    */
     string to_string(bool reverse = false) const{
         if (this->head->get_nxt_node() == NULL)
             return "WARNING:> Empty List.";
@@ -221,7 +221,7 @@ public:
      * was not found the function return -1.
      * 
      * If the Doubly Linked List is empty, the function returns -1 and a message: "WARNING:> Empty List.".
-    */ 
+    */
     int search(const T &info) const{
         if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
@@ -248,7 +248,7 @@ public:
     }
     /**
      * Returns size of the Doubly Linked List.
-    */ 
+    */
     uint get_size() const{
         return this->size;
     }
@@ -258,7 +258,7 @@ public:
     bool empty() const{
         return !this->size;
     }
-    //Non-const methods
+    //Non-const
     /**
      * Insert the value passed by parameter at the "pos" position
      * 
@@ -389,7 +389,7 @@ public:
      * If the Doubly Linked List is empty, the function returns "false" and a message: "WARNING:> Empty List.".
      * 
      * The same happens if the position passed by parameter is out of the bounds, the function returns "false" and a message: "ERROR:> Invalid Position.".
-    */  
+    */
     bool erase(const int &pos) {
         if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
@@ -439,6 +439,14 @@ public:
         free(temp);
         return true;
     }
+    /**
+     * Erase the node passed by parameter.
+     * 
+     * The function returns "true" if the element has successfully erased, else returns "false".
+     * 
+     * If the node is NULL, the function returns "false" and a message: "WARNING:> Empty node.".
+     * 
+     */
     bool erase(Node<T> *temp) {
         if (temp == NULL) {
             cout << "WARNING:> Empty node." << endl;
@@ -476,7 +484,7 @@ public:
      * The function returns "true" if the element has successfully removed, else returns "false".
      * 
      * If the Doubly Linked List is empty, the function returns "false" and a message: "WARNING:> Empty List.".
-    */ 
+    */
     bool remove(const T &info) {
         if (this->head->get_nxt_node() == NULL) {
             cout << "WARNING:> Empty List." << endl;
@@ -542,7 +550,7 @@ int main()
     DoublyList<Type{basic data types, string}> L;
     L.
     */
-    tests();
+    //tests();
 }
 
 void tests() 
