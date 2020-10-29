@@ -3,6 +3,7 @@
 using namespace std;
 
 #define debug(x) cout << "DEBUG# " << x << endl;
+typedef unsigned int uint;
 
 //Declarations
     //Functions
@@ -550,7 +551,7 @@ int main()
     DoublyList<Type{basic data types, string}> L;
     L.
     */
-    //tests();
+   // tests();
 }
 
 void tests() 
